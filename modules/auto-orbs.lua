@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (BUG-FIXED ONLY)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -12,17 +12,20 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local connection
 
 local function collectOrbs()
-    pcall(function()
-        for _, location in ipairs(locations) do
-            for _, orb in ipairs(currentOrbs) do
-                ReplicatedStorage.rEvents.orbEvent:FireServer("collectOrb", orb, location)
-            end
+    local orbEvent = ReplicatedStorage.rEvents and ReplicatedStorage.rEvents.orbEvent
+    if not orbEvent then return end -- 🔧 Fix: avoid error if remote missing
+    for _, location in ipairs(locations) do
+        for _, orb in ipairs(currentOrbs) do
+            pcall(function()
+                orbEvent:FireServer("collectOrb", orb, location)
+            end)
         end
-    end)
+    end
 end
 
 local function startFarm()
-    if connection then return end
+    stopFarm() -- 🔧 Fix: always stop previous connection first
+    orbToggle = true
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
             collectOrbs()
@@ -35,13 +38,14 @@ local function stopFarm()
         connection:Disconnect()
         connection = nil
     end
+    orbToggle = false
 end
 
 return function(option)
     if option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
-        print("🎯 AUTO-ORBS (ALL) ACTIVATED")
+        print("🟨 AUTO-ORBS (ALL) ACTIVATED")
         startFarm()
     elseif option == "off" then
         orbToggle = false
@@ -50,12 +54,12 @@ return function(option)
     elseif option == "yellow" then
         currentOrbs = {"Yellow Orb"}
         orbToggle = true
-        print("🎯 AUTO-ORBS (YELLOW) ACTIVATED")
+        print("🟨 AUTO-ORBS (YELLOW) ACTIVATED")
         startFarm()
     elseif type(option) == "table" then
         currentOrbs = option
         orbToggle = true
-        print("🎯 AUTO-ORBS (CUSTOM) ACTIVATED")
+        print("🟨 AUTO-ORBS (CUSTOM) ACTIVATED")
         startFarm()
     else
         warn("Invalid option for auto-orbs.lua! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
