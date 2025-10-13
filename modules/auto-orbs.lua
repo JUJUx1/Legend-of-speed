@@ -1,40 +1,42 @@
--- ULTRA FAST ORB COLLECTOR
+-- FIXED AUTO-ORBS.LUA
 local orbToggle = false
-local orbSpeed = 0.05 -- INSANE SPEED
+local orbSpeed = 0.2 -- SLOWER BUT SAFE
 
--- SPECIFIC ORB TYPES YOU WANT
 local targetOrbs = {
-    "Yellow Orb",    -- Fast coins
-    "Red Orb",       -- Good value  
-    "Gem",           -- Best value
-    "Diamond Orb",   -- If exists
-    "Rainbow Orb",   -- If exists
-    "Blue Orb"       -- If exists
+    "Yellow Orb",
+    "Red Orb", 
+    "Gem"
 }
 
--- SPECIFIC LOCATIONS YOU WANT
 local targetLocations = {
-    "City",          -- Main area
-    "Snow City",     -- Cold area
-    "Magma City",    -- Fire area
-    "Space",         -- Space area
-    "Desert",        -- Sand area
-    "Fantasy World"  -- If exists
+    "City",
+    "Snow City",
+    "Magma City"
 }
 
-local function UltraOrbCollector()
+local function SafeOrbCollector()
     while orbToggle and wait(orbSpeed) do
         pcall(function()
-            -- MASS COLLECTION - Hits ALL locations and orb types simultaneously
-            for _, location in pairs(targetLocations) do
-                for _, orbType in pairs(targetOrbs) do
-                    -- Spam 3x per orb type for maximum efficiency
-                    for i = 1, 3 do
-                        game:GetService('ReplicatedStorage').rEvents.orbEvent:FireServer("collectOrb", orbType, location)
-                    end
-                end
-            end
+            -- Only do ONE location per cycle to avoid spam
+            local location = targetLocations[math.random(1, #targetLocations)]
+            local orbType = targetOrbs[math.random(1, #targetOrbs)]
+            
+            game:GetService('ReplicatedStorage').rEvents.orbEvent:FireServer("collectOrb", orbType, location)
         end)
+    end
+end
+
+return {
+    Toggle = function(state)
+        orbToggle = state
+        if state then
+            print("🎯 SAFE ORB COLLECTOR ACTIVATED")
+            spawn(SafeOrbCollector)
+        else
+            print("🛑 ORB COLLECTOR DEACTIVATED")
+        end
+    end
+}        end)
     end
 end
 
