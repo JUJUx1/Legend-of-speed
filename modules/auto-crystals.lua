@@ -1,14 +1,17 @@
 local crystalToggle = false
 
-spawn(function()
-    while wait(2) do
+local function CrystalLoop()
+    while true do
         if crystalToggle then
             pcall(function()
                 game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", "Red Crystal")
             end)
         end
+        wait(2)
     end
-end)
+end
+
+spawn(CrystalLoop)
 
 return function(state)
     crystalToggle = state
