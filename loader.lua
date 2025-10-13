@@ -1,9 +1,9 @@
--- ZETA REALM COMPLETE LOADER (with Yellow Only Option)
+-- ZETA REALM COMPLETE LOADER (with Yellow Only Option + Auto-Hoop)
 local modules = {
     {"Auto-Rebirth", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-rebirth.lua"},
     {"Auto-Orbs", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-orbs.lua"}, 
     {"Auto-Crystals", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-crystals.lua"},
-    {"Auto-Hoop", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-hoop.lua"}, -- ADD THIS LINE
+    {"Auto-Hoop", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-hoop.lua"}, -- NEW MODULE
     {"Anti-AFK", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/anti-afk.lua"},
     {"FPS-Booster", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/fps-booster.lua"},
     {"Server-Hopper", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/server-hopper.lua"}
@@ -55,7 +55,7 @@ function CreateZetaUI()
     MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     MainFrame.BorderSizePixel = 0
     MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
-    MainFrame.Size = UDim2.new(0, 300, 0, 380)
+    MainFrame.Size = UDim2.new(0, 300, 0, 410) -- Increased height for new button
     MainFrame.Active = true
     MainFrame.Draggable = true
 
@@ -139,7 +139,7 @@ function CreateZetaUI()
             ToggleButton.Text = "SHOW"
         else
             Content.Visible = true
-            MainFrame.Size = UDim2.new(0, 300, 0, 380)
+            MainFrame.Size = UDim2.new(0, 300, 0, 410) -- Updated height
             ToggleButton.Text = "HIDE"
         end
     end)
@@ -150,15 +150,15 @@ function CreateZetaUI()
     end)
 
     -- CREATE CONTROL BUTTONS
-   local buttonTemplates = {
-    {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "toggle"},
-    {"AUTO-ORBS: OFF", "Auto-Orbs", "toggle"},
-    {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "toggle"},
-    {"AUTO-HOOP: OFF", "Auto-Hoop", "toggle"}, -- ADD THIS LINE
-    {"ACTIVATE ANTI-AFK", "Anti-AFK", "activate"},
-    {"BOOST FPS", "FPS-Booster", "boost"},
-    {"SERVER HOP", "Server-Hopper", "hop"}
-}
+    local buttonTemplates = {
+        {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "toggle"},
+        {"AUTO-ORBS: OFF", "Auto-Orbs", "toggle"},
+        {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "toggle"},
+        {"AUTO-HOOP: OFF", "Auto-Hoop", "toggle"}, -- NEW BUTTON
+        {"ACTIVATE ANTI-AFK", "Anti-AFK", "activate"},
+        {"BOOST FPS", "FPS-Booster", "boost"},
+        {"SERVER HOP", "Server-Hopper", "hop"}
+    }
 
     for i, template in ipairs(buttonTemplates) do
         local button = Instance.new("TextButton")
