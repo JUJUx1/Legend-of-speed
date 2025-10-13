@@ -4,18 +4,20 @@ local orbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
     "Eternal Orb", "Green Orb", "Gem Orb", "Diamond Orb"
 }
-local location = "City"
+local locations = { "City", "Desert", "Space", "Magma", "Legends Highway", "Snow", "Dark Matter" }
 
 local function OrbLoop()
     while true do
         if orbToggle then
             pcall(function()
-                for _, orb in ipairs(orbs) do
-                    game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", orb, location)
+                for _, location in ipairs(locations) do
+                    for _, orb in ipairs(orbs) do
+                        game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", orb, location)
+                    end
                 end
             end)
         end
-        task.wait(0.5)
+        task.wait(0.1) -- Faster than 0.5
     end
 end
 
