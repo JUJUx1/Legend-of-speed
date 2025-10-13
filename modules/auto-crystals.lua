@@ -1,13 +1,10 @@
--- AUTO CRYSTAL OPENER
+-- WORKING AUTO-CRYSTALS
 local crystalToggle = false
 
 local function OpenCrystals()
-    while crystalToggle and wait(0.3) do
+    while crystalToggle and wait(1) do
         pcall(function()
-            local crystals = {"Red Crystal", "Purple Crystal", "Yellow Crystal"}
-            for _, crystal in pairs(crystals) do
-                game:GetService('ReplicatedStorage').rEvents.openCrystalRemote:InvokeServer("openCrystal", crystal)
-            end
+            game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer("openCrystal", "Red Crystal")
         end)
     end
 end
@@ -16,7 +13,10 @@ return {
     Toggle = function(state)
         crystalToggle = state
         if state then
+            print("💎 AUTO-CRYSTALS ACTIVATED")
             spawn(OpenCrystals)
+        else
+            print("🛑 AUTO-CRYSTALS STOPPED")
         end
     end
 }
