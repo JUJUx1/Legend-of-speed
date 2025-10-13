@@ -1,4 +1,4 @@
--- ⚡ OPTIMIZED FAST ORBS (NO LAG) ⚡
+-- 🎯 ORIGINAL SPEED AUTO-ORBS (NO LAG)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -14,17 +14,15 @@ local connection
 -- FIND ORB REMOTE
 local orbRemote = game:GetService("ReplicatedStorage").rEvents.orbEvent
 
--- OPTIMIZED COLLECTION (NO LAG)
+-- ORIGINAL COLLECTION (NO EXTRA LOOPS)
 local function collectOrbs()
     if not orbRemote then return end
     
     pcall(function()
-        -- FAST BUT NOT TOO FAST - 3x SPEED
-        for i = 1, 3 do
-            for _, location in ipairs(locations) do
-                for _, orb in ipairs(currentOrbs) do
-                    orbRemote:FireServer("collectOrb", orb, location)
-                end
+        -- ORIGINAL SPEED - NO EXTRA LOOPS
+        for _, location in ipairs(locations) do
+            for _, orb in ipairs(currentOrbs) do
+                orbRemote:FireServer("collectOrb", orb, location)
             end
         end
     end)
@@ -32,7 +30,7 @@ end
 
 local function startFarm()
     if connection then return end
-    connection = RunService.Heartbeat:Connect(function()  -- Use Heartbeat instead of RenderStepped
+    connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
             collectOrbs()
         end
@@ -50,16 +48,16 @@ return function(option)
     if option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
-        print("⚡ FAST ORBS ACTIVATED (3x SPEED - NO LAG)")
+        print("🎯 AUTO-ORBS ACTIVATED (ORIGINAL SPEED)")
         startFarm()
     elseif option == "off" then
         orbToggle = false
-        print("🛑 ORBS STOPPED")
+        print("🛑 AUTO-ORBS STOPPED")
         stopFarm()
     elseif option == "yellow" then
         currentOrbs = {"Yellow Orb"}
         orbToggle = true
-        print("💛 FAST YELLOW ORBS ACTIVATED (3x SPEED - NO LAG)")
+        print("💛 YELLOW ORBS ACTIVATED (ORIGINAL SPEED)")
         startFarm()
     end
 end
