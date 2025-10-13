@@ -1,14 +1,17 @@
 local rebirthToggle = false
 
-spawn(function()
-    while wait(1) do
+local function RebirthLoop()
+    while true do
         if rebirthToggle then
             pcall(function()
                 game:GetService("ReplicatedStorage").rEvents.rebirthEvent:FireServer("rebirthRequest")
             end)
         end
+        wait(1)
     end
-end)
+end
+
+spawn(RebirthLoop)
 
 return function(state)
     rebirthToggle = state
