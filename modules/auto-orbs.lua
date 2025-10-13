@@ -1,118 +1,80 @@
--- 🚀 RAW MAXIMUM SPEED ORBS
+-- 🎯 DEBUG MODE - FIND THE REAL ORB COLLECTION METHOD
 local enabled = false
 local conn = nil
 local orbRemote = game:GetService("ReplicatedStorage").rEvents.orbEvent
-local fire = orbRemote.FireServer
+
+-- HOOK THE REMOTE TO SEE WHAT'S BEING SENT
+local originalFire = orbRemote.FireServer
+orbRemote.FireServer = function(self, ...)
+    local args = {...}
+    print("🎯 REMOTE FIRED:", unpack(args))
+    return originalFire(self, ...)
+end
 
 return function(cmd)
-    if cmd == "on" then
-        enabled = true
-        print("🚀 RAW SPEED ORBS ACTIVATED")
+    if cmd == "debug" then
+        print("🔍 DEBUG MODE - Checking orb collection...")
+        print("📡 Testing different argument combinations...")
         
-        if conn then conn:Disconnect() end
+        -- TEST DIFFERENT ARGUMENT PATTERNS
+        orbRemote:FireServer("collectOrb", "Yellow Orb", "City")
+        wait(0.1)
+        orbRemote:FireServer("collectOrb", "City", "Yellow Orb") -- REVERSED
+        wait(0.1)
+        orbRemote:FireServer("collectOrb", "YellowOrb", "City") -- NO SPACE
+        wait(0.1)
+        orbRemote:FireServer("CollectOrb", "Yellow Orb", "City") -- CAPITAL C
+        wait(0.1)
+        orbRemote:FireServer("collectorb", "Yellow Orb", "City") -- LOWERCASE
+        wait(0.1)
+        orbRemote:FireServer("collectOrb", "Yellow", "City") -- SHORT NAME
+        wait(0.1)
+        orbRemote:FireServer("collectOrb") -- NO ARGS
+        wait(0.1)
+        orbRemote:FireServer() -- EMPTY
+        
+        print("✅ DEBUG TESTS COMPLETE - Check output above!")
+        
+    elseif cmd == "test" then
+        enabled = true
+        print("⚡ TESTING MAXIMUM THROUGHPUT...")
+        
+        local startTime = tick()
+        local callCount = 0
         
         conn = game:GetService("RunService").Heartbeat:Connect(function()
             if not enabled then return end
             
-            -- RAW DIRECT CALLS - MAXIMUM POSSIBLE
-            fire(orbRemote, "collectOrb", "Red Orb", "City")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "City")
-            fire(orbRemote, "collectOrb", "Blue Orb", "City")
-            fire(orbRemote, "collectOrb", "Green Orb", "City")
-            fire(orbRemote, "collectOrb", "Red Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Green Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Red Orb", "Space")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Space")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Space")
-            fire(orbRemote, "collectOrb", "Green Orb", "Space")
-            fire(orbRemote, "collectOrb", "Red Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Green Orb", "Magma")
-        end)
-        
-    elseif cmd == "ultra" then
-        enabled = true
-        print("💥 ULTRA RAW SPEED")
-        
-        if conn then conn:Disconnect() end
-        
-        -- USE RENDERSTEP FOR MAXIMUM FRAME RATE
-        conn = game:GetService("RunService").RenderStepped:Connect(function()
-            if not enabled then return end
+            -- TEST SINGLE CALL
+            orbRemote:FireServer("collectOrb", "Yellow Orb", "City")
+            callCount = callCount + 1
             
-            -- MAXIMUM CALLS PER RENDER FRAME
-            for i = 1, 3 do  -- 3 FULL CYCLES PER FRAME
-                fire(orbRemote, "collectOrb", "Red Orb", "City")
-                fire(orbRemote, "collectOrb", "Yellow Orb", "City")
-                fire(orbRemote, "collectOrb", "Blue Orb", "City")
-                fire(orbRemote, "collectOrb", "Green Orb", "City")
-                fire(orbRemote, "collectOrb", "Red Orb", "Desert")
-                fire(orbRemote, "collectOrb", "Yellow Orb", "Desert")
-                fire(orbRemote, "collectOrb", "Blue Orb", "Desert")
-                fire(orbRemote, "collectOrb", "Green Orb", "Desert")
-                fire(orbRemote, "collectOrb", "Red Orb", "Space")
-                fire(orbRemote, "collectOrb", "Yellow Orb", "Space")
-                fire(orbRemote, "collectOrb", "Blue Orb", "Space")
-                fire(orbRemote, "collectOrb", "Green Orb", "Space")
-                fire(orbRemote, "collectOrb", "Red Orb", "Magma")
-                fire(orbRemote, "collectOrb", "Yellow Orb", "Magma")
-                fire(orbRemote, "collectOrb", "Blue Orb", "Magma")
-                fire(orbRemote, "collectOrb", "Green Orb", "Magma")
+            -- SHOW SPEED EVERY SECOND
+            if tick() - startTime >= 1 then
+                print("📊 CALLS PER SECOND: " .. callCount)
+                enabled = false
+                conn:Disconnect()
             end
         end)
         
-    elseif cmd == "nuclear" then
-        enabled = true
-        print("☢️ NUCLEAR SPEED MODE")
+    elseif cmd == "find" then
+        print("🔎 SEARCHING FOR REAL ORB METHODS...")
         
-        if conn then conn:Disconnect() end
-        
-        -- MULTIPLE CONNECTIONS FOR MAXIMUM THROUGHPUT
-        local conn1 = game:GetService("RunService").Heartbeat:Connect(function()
-            fire(orbRemote, "collectOrb", "Red Orb", "City")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "City")
-            fire(orbRemote, "collectOrb", "Blue Orb", "City")
-            fire(orbRemote, "collectOrb", "Green Orb", "City")
-        end)
-        
-        local conn2 = game:GetService("RunService").Heartbeat:Connect(function()
-            fire(orbRemote, "collectOrb", "Red Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Desert")
-            fire(orbRemote, "collectOrb", "Green Orb", "Desert")
-        end)
-        
-        local conn3 = game:GetService("RunService").RenderStepped:Connect(function()
-            fire(orbRemote, "collectOrb", "Red Orb", "Space")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Space")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Space")
-            fire(orbRemote, "collectOrb", "Green Orb", "Space")
-        end)
-        
-        local conn4 = game:GetService("RunService").RenderStepped:Connect(function()
-            fire(orbRemote, "collectOrb", "Red Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Yellow Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Blue Orb", "Magma")
-            fire(orbRemote, "collectOrb", "Green Orb", "Magma")
-        end)
-        
-        conn = {conn1, conn2, conn3, conn4}
+        -- CHECK IF THERE ARE OTHER REMOTES
+        for _, obj in pairs(game:GetDescendants()) do
+            if obj:IsA("RemoteEvent") or obj:IsA("RemoteFunction") then
+                if string.find(obj.Name:lower(), "orb") then
+                    print("🎯 FOUND ORB REMOTE:", obj:GetFullName())
+                end
+            end
+        end
         
     elseif cmd == "off" then
         enabled = false
         if conn then
-            if type(conn) == "table" then
-                for _, c in pairs(conn) do
-                    c:Disconnect()
-                end
-            else
-                conn:Disconnect()
-            end
+            conn:Disconnect()
             conn = nil
         end
-        print("🛑 ORBS STOPPED")
+        print("🛑 DEBUG STOPPED")
     end
 end
