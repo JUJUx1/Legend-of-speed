@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH BURST MODE (FIXED STOP)
+-- INSTANT STOP AUTO-ORBS
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -10,7 +10,7 @@ local currentOrbs = allOrbs
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local connection
-local stopBurst = false  -- ADDED: Control variable for stopping bursts
+local burstRunning = false  -- TRACK IF BURST IS RUNNING
 
 -- FUNCTION TO FIND THE CORRECT REMOTE
 local function findOrbRemote()
@@ -50,42 +50,38 @@ end
 
 local orbRemote = findOrbRemote()
 
--- BURST COLLECTION FUNCTION (Runs 20 times but can be stopped)
-local function burstCollect()
-    if not orbRemote then return end
+-- SINGLE FAST COLLECTION (NO LOOPS)
+local function fastCollect()
+    if not orbRemote or not orbToggle then return end
     
-    local burstCount = 20  -- Run 20 times
-    stopBurst = false      -- Reset stop flag
-    
-    for burst = 1, burstCount do
-        -- CHECK IF WE SHOULD STOP BEFORE EACH BURST
-        if stopBurst or not orbToggle then
-            print("🛑 BURST STOPPED EARLY")
-            break
-        end
-        
-        pcall(function()
-            for _, location in ipairs(locations) do
-                for _, orb in ipairs(currentOrbs) do
-                    orbRemote:FireServer("collectOrb", orb, location)
-                end
+    pcall(function()
+        for _, location in ipairs(locations) do
+            for _, orb in ipairs(currentOrbs) do
+                orbRemote:FireServer("collectOrb", orb, location)
             end
-        end)
-        wait(0.01) -- Small delay between bursts
-    end
+        end
+    end)
 end
 
 local function startFarm()
-    if connection then return end
+    if connection then 
+        connection:Disconnect()
+        connection = nil
+    end
+    
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
-            burstCollect()  -- Use burst mode
+            -- Run 20x collections per frame instead of loops
+            for i = 1, 20 do
+                if not orbToggle then break end  -- INSTANT BREAK
+                fastCollect()
+            end
         end
     end)
 end
 
 local function stopFarm()
-    stopBurst = true  -- SET STOP FLAG
+    orbToggle = false  -- SET FIRST FOR INSTANT STOP
     if connection then
         connection:Disconnect()
         connection = nil
@@ -96,25 +92,20 @@ return function(option)
     if option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
-        stopBurst = false
-        print("🎯 AUTO-ORBS BURST MODE ACTIVATED (20x)")
+        print("🎯 AUTO-ORBS ACTIVATED (20x PER FRAME)")
         startFarm()
     elseif option == "off" then
-        orbToggle = false
-        stopBurst = true
-        print("🛑 AUTO-ORBS STOPPED")
         stopFarm()
+        print("🛑 AUTO-ORBS INSTANT STOPPED")
     elseif option == "yellow" then
         currentOrbs = {"Yellow Orb"}
         orbToggle = true
-        stopBurst = false
-        print("💛 YELLOW ORB BURST MODE ACTIVATED (20x)")
+        print("💛 YELLOW ORBS ACTIVATED (20x PER FRAME)")
         startFarm()
     elseif type(option) == "table" then
         currentOrbs = option
         orbToggle = true
-        stopBurst = false
-        print("🎯 AUTO-ORBS CUSTOM BURST MODE ACTIVATED (20x)")
+        print("🎯 CUSTOM ORBS ACTIVATED (20x PER FRAME)")
         startFarm()
     else
         warn("Invalid option for auto-orbs.lua! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
