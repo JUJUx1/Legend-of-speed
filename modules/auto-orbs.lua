@@ -1,27 +1,13 @@
--- FIXED AUTO-ORBS.LUA
+-- WORKING AUTO-ORBS COLLECTOR
 local orbToggle = false
-local orbSpeed = 0.2 -- SLOWER BUT SAFE
 
-local targetOrbs = {
-    "Yellow Orb",
-    "Red Orb", 
-    "Gem"
-}
-
-local targetLocations = {
-    "City",
-    "Snow City",
-    "Magma City"
-}
-
-local function SafeOrbCollector()
-    while orbToggle and wait(orbSpeed) do
+local function OrbCollector()
+    while orbToggle and wait(0.3) do -- Safe speed
         pcall(function()
-            -- Only do ONE location per cycle to avoid spam
-            local location = targetLocations[math.random(1, #targetLocations)]
-            local orbType = targetOrbs[math.random(1, #targetOrbs)]
-            
-            game:GetService('ReplicatedStorage').rEvents.orbEvent:FireServer("collectOrb", orbType, location)
+            -- Use the EXACT remote path we found
+            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Yellow Orb", "City")
+            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Red Orb", "City") 
+            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Gem", "City")
         end)
     end
 end
@@ -30,11 +16,13 @@ return {
     Toggle = function(state)
         orbToggle = state
         if state then
-            print("🎯 SAFE ORB COLLECTOR ACTIVATED")
-            spawn(SafeOrbCollector)
+            print("🎯 ORB COLLECTOR ACTIVATED")
+            spawn(OrbCollector)
         else
-            print("🛑 ORB COLLECTOR DEACTIVATED")
+            print("🛑 ORB COLLECTOR STOPPED")
         end
+    end
+}        end
     end
 }        end)
     end
