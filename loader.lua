@@ -1,11 +1,11 @@
 -- ZETA REALM COMPLETE LOADER
 local modules = {
-    {"Auto-Rebirth", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/auto-rebirth.lua"},
-    {"Auto-Orbs", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/auto-orbs.lua"}, 
-    {"Auto-Crystals", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/auto-crystals.lua"},
-    {"Anti-AFK", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/anti-afk.lua"},
-    {"FPS-Booster", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/fps-booster.lua"},
-    {"Server-Hopper", "https://raw.githubusercontent.com/YourUsername/zeta-realm/main/modules/server-hopper.lua"}
+    {"Auto-Rebirth", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-rebirth.lua"},
+    {"Auto-Orbs", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-orbs.lua"}, 
+    {"Auto-Crystals", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-crystals.lua"},
+    {"Anti-AFK", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/anti-afk.lua"},
+    {"FPS-Booster", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/fps-booster.lua"},
+    {"Server-Hopper", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/server-hopper.lua"}
 }
 
 local ZetaModules = {}
