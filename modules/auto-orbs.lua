@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER)
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER + CRASH PROTECTION)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -31,17 +31,20 @@ local function startFarm()
             collectOrbs()
         end
     end)
+    print("[DEBUG] Auto-Orbs started. Connection:", connection)
 end
 
 local function stopFarm()
     if connection then
-        connection:Disconnect()
+        pcall(function()
+            connection:Disconnect()
+        end)
         connection = nil
     end
     orbToggle = false
+    print("[DEBUG] Auto-Orbs stopped.")
 end
 
--- 🔧 FIXED: Now accepts true/false AND "on"/"off"/"yellow"
 return function(option)
     if option == true or option == "on" then
         currentOrbs = allOrbs
