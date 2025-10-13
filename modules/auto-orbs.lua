@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER + CRASH PROTECTION)
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER + RUNSERVICE SAFETY)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -26,6 +26,13 @@ end
 local function startFarm()
     stopFarm()
     orbToggle = true
+
+    if not RunService or not RunService.Heartbeat then
+        warn("[Auto-Orbs] RunService or Heartbeat not available! Stopping.")
+        orbToggle = false
+        return
+    end
+
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
             collectOrbs()
