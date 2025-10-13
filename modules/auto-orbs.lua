@@ -1,40 +1,24 @@
--- WORKING AUTO-ORBS COLLECTOR
 local orbToggle = false
 
-local function OrbCollector()
-    while orbToggle and wait(0.3) do -- Safe speed
-        pcall(function()
-            -- Use the EXACT remote path we found
-            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Yellow Orb", "City")
-            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Red Orb", "City") 
-            game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Gem", "City")
-        end)
-    end
-end
-
-return {
-    Toggle = function(state)
-        orbToggle = state
-        if state then
-            print("🎯 ORB COLLECTOR ACTIVATED")
-            spawn(OrbCollector)
-        else
-            print("🛑 ORB COLLECTOR STOPPED")
+spawn(function()
+    while wait(0.5) do
+        if orbToggle then
+            pcall(function()
+                game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Yellow Orb", "City")
+                game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Red Orb", "City")
+            end)
         end
     end
-}        end
-    end
-}        end)
-    end
-end
+end)
 
--- SPEED CONTROL FUNCTION
-local function SetOrbSpeed(newSpeed)
-    orbSpeed = newSpeed
-    print("🔥 ORB SPEED SET TO: " .. newSpeed)
-end
-
-return {
+return function(state)
+    orbToggle = state
+    if state then
+        print("🎯 AUTO-ORBS ACTIVATED")
+    else
+        print("🛑 AUTO-ORBS STOPPED")
+    end
+endreturn {
     Toggle = function(state)
         orbToggle = state
         if state then
