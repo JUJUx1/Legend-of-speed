@@ -1,44 +1,78 @@
--- 🎯 LESS LAGGY AUTO-ORBS
+-- ⚡ LIGHTNING FAST AUTO-ORBS (ZERO LAG)
 local enabled = false
 local conn = nil
 
 local orbRemote = game:GetService("ReplicatedStorage").rEvents.orbEvent
-local places = {"City", "Desert", "Space", "Magma"} -- REDUCED LOCATIONS
-local allOrbs = {"Red Orb", "Yellow Orb", "Blue Orb", "Green Orb"} -- REDUCED ORBS
+local places = {"City", "Desert", "Space", "Magma"}
+local allOrbs = {"Red Orb", "Yellow Orb", "Blue Orb", "Green Orb"}
+
+-- PRE-CACHE EVERYTHING FOR MAXIMUM SPEED
+local fireServer = orbRemote.FireServer
+local heartbeat = game:GetService("RunService").Heartbeat
 
 return function(cmd)
     if cmd == "on" then
         enabled = true
-        print("🎯 AUTO-ORBS ACTIVATED (LOW LAG)")
+        print("⚡ LIGHTNING ORBS ACTIVATED")
         
         if conn then conn:Disconnect() end
         
-        conn = game:GetService("RunService").Heartbeat:Connect(function()
+        conn = heartbeat:Connect(function()
             if not enabled then return end
             
-            -- SLOWER COLLECTION - LESS LAG
+            -- NO WAITS, JUST RAPID FIRE ALL ORBS
             for _, place in ipairs(places) do
                 for _, orb in ipairs(allOrbs) do
-                    orbRemote:FireServer("collectOrb", orb, place)
+                    fireServer(orbRemote, "collectOrb", orb, place)
                 end
-                wait(0.02) -- ADDED DELAY BETWEEN LOCATIONS
             end
         end)
         
     elseif cmd == "yellow" then
         enabled = true
-        print("💛 YELLOW ORBS ACTIVATED (LOW LAG)")
+        print("💛 YELLOW LIGHTNING MODE")
         
         if conn then conn:Disconnect() end
         
-        conn = game:GetService("RunService").Heartbeat:Connect(function()
+        conn = heartbeat:Connect(function()
             if not enabled then return end
             
-            -- YELLOW ONLY - EVEN LESS LAG
+            -- MAXIMUM YELLOW ORB SPAM
             for _, place in ipairs(places) do
-                orbRemote:FireServer("collectOrb", "Yellow Orb", place)
-                wait(0.03) -- MORE DELAY FOR YELLOW ONLY
+                fireServer(orbRemote, "collectOrb", "Yellow Orb", place)
             end
+        end)
+        
+    elseif cmd == "turbo" then
+        enabled = true
+        print("🚀 TURBO ORB MODE ACTIVATED")
+        
+        if conn then conn:Disconnect() end
+        
+        -- ULTRA FAST - NO LOOPS, JUST DIRECT SPAM
+        conn = heartbeat:Connect(function()
+            if not enabled then return end
+            
+            -- DIRECT METHOD CALLS - FASTEST POSSIBLE
+            fireServer(orbRemote, "collectOrb", "Red Orb", "City")
+            fireServer(orbRemote, "collectOrb", "Yellow Orb", "City")
+            fireServer(orbRemote, "collectOrb", "Blue Orb", "City")
+            fireServer(orbRemote, "collectOrb", "Green Orb", "City")
+            
+            fireServer(orbRemote, "collectOrb", "Red Orb", "Desert")
+            fireServer(orbRemote, "collectOrb", "Yellow Orb", "Desert")
+            fireServer(orbRemote, "collectOrb", "Blue Orb", "Desert")
+            fireServer(orbRemote, "collectOrb", "Green Orb", "Desert")
+            
+            fireServer(orbRemote, "collectOrb", "Red Orb", "Space")
+            fireServer(orbRemote, "collectOrb", "Yellow Orb", "Space")
+            fireServer(orbRemote, "collectOrb", "Blue Orb", "Space")
+            fireServer(orbRemote, "collectOrb", "Green Orb", "Space")
+            
+            fireServer(orbRemote, "collectOrb", "Red Orb", "Magma")
+            fireServer(orbRemote, "collectOrb", "Yellow Orb", "Magma")
+            fireServer(orbRemote, "collectOrb", "Blue Orb", "Magma")
+            fireServer(orbRemote, "collectOrb", "Green Orb", "Magma")
         end)
         
     elseif cmd == "off" then
