@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS
+-- ADVANCED AUTO-ORBS WITH BURST MODE
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -15,18 +15,13 @@ local connection
 local function findOrbRemote()
     print("🔍 Searching for orb remote...")
     
-    -- Common remote paths in Legend of Speed
     local possiblePaths = {
         "rEvents.orbEvent",
         "Remotes.OrbEvent",
         "RemoteEvents.OrbEvent", 
         "OrbEvent",
         "orbEvent",
-        "Events.OrbEvent",
-        "rEvents.OrbRemote",
-        "Remotes.OrbRemote",
-        "GameEvents.OrbEvent",
-        "Network.OrbEvent"
+        "Events.OrbEvent"
     }
     
     for _, path in ipairs(possiblePaths) do
@@ -48,37 +43,38 @@ local function findOrbRemote()
         end
     end
     
-    -- If no remote found, try to find any RemoteEvent that might be for orbs
-    print("⚠️  Searching for any RemoteEvent...")
-    for _, child in pairs(ReplicatedStorage:GetDescendants()) do
-        if child:IsA("RemoteEvent") then
-            print("🔍 Found RemoteEvent: " .. child:GetFullName())
-            -- Try calling it to see if it works
-            pcall(function()
-                child:FireServer("test")
-                print("✅ Potential orb remote: " .. child:GetFullName())
-                return child
-            end)
-        end
-    end
-    
     warn("❌ COULD NOT FIND ORB REMOTE EVENT")
     return nil
 end
 
 local orbRemote = findOrbRemote()
 
-local function collectOrbs()
-    if not orbRemote then
-        print("❌ No orb remote found - please check the remote path")
-        return
+-- BURST COLLECTION FUNCTION (Runs 20 times)
+local function burstCollect()
+    if not orbRemote then return end
+    
+    local burstCount = 20  -- Run 20 times
+    
+    for burst = 1, burstCount do
+        pcall(function()
+            for _, location in ipairs(locations) do
+                for _, orb in ipairs(currentOrbs) do
+                    orbRemote:FireServer("collectOrb", orb, location)
+                end
+            end
+        end)
+        wait(0.01) -- Small delay between bursts
     end
+end
+
+-- SINGLE RUN COLLECTION (Original function)
+local function collectOrbs()
+    if not orbRemote then return end
     
     pcall(function()
         for _, location in ipairs(locations) do
             for _, orb in ipairs(currentOrbs) do
                 orbRemote:FireServer("collectOrb", orb, location)
-                task.wait(0.01) -- Small delay to prevent crashing
             end
         end
     end)
@@ -88,7 +84,7 @@ local function startFarm()
     if connection then return end
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
-            collectOrbs()
+            burstCollect()  -- Use burst mode instead of single collection
         end
     end)
 end
@@ -104,7 +100,7 @@ return function(option)
     if option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
-        print("🎯 AUTO-ORBS (ALL) ACTIVATED")
+        print("🎯 AUTO-ORBS BURST MODE ACTIVATED (20x)")
         startFarm()
     elseif option == "off" then
         orbToggle = false
@@ -113,12 +109,12 @@ return function(option)
     elseif option == "yellow" then
         currentOrbs = {"Yellow Orb"}
         orbToggle = true
-        print("🎯 AUTO-ORBS (YELLOW) ACTIVATED")
+        print("💛 YELLOW ORB BURST MODE ACTIVATED (20x)")
         startFarm()
     elseif type(option) == "table" then
         currentOrbs = option
         orbToggle = true
-        print("🎯 AUTO-ORBS (CUSTOM) ACTIVATED")
+        print("🎯 AUTO-ORBS CUSTOM BURST MODE ACTIVATED (20x)")
         startFarm()
     else
         warn("Invalid option for auto-orbs.lua! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
