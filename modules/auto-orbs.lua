@@ -1,4 +1,3 @@
--- AUTO-COLLECT ALL ORBS (Red, Orange, Yellow, Blue, Eternal, Green, Gem, Diamond, etc.)
 local orbToggle = false
 local orbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -17,7 +16,7 @@ local function OrbLoop()
                 end
             end)
         end
-        task.wait(0.1) -- Faster than 0.5
+        task.wait(0.05) -- SAFER FAST VALUE
     end
 end
 
