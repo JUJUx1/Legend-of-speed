@@ -1,3 +1,4 @@
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -57,61 +58,6 @@ return function(option)
         print("🎯 AUTO-ORBS (CUSTOM) ACTIVATED")
         startFarm()
     else
-        print("Invalid option! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
-    end
-end    end
-end
-
--- The returned function can be called as:
--- autoOrbsModule("on")         -- Start farming all orbs (default)
--- autoOrbsModule("off")        -- Stop farming
--- autoOrbsModule("yellow")     -- Farm only yellow orbs
--- autoOrbsModule({"Yellow Orb", "Blue Orb"}) -- Farm only yellow and blue orbs
-return function(option)
-    if option == "on" then
-        currentOrbs = allOrbs
-        orbToggle = true
-        print("🎯 AUTO-ORBS (ALL) ACTIVATED")
-        startFarm()
-    elseif option == "off" then
-        orbToggle = false
-        print("🛑 AUTO-ORBS STOPPED")
-        stopFarm()
-    elseif option == "yellow" then
-        currentOrbs = {"Yellow Orb"}
-        orbToggle = true
-        print("🎯 AUTO-ORBS (YELLOW) ACTIVATED")
-        startFarm()
-    elseif type(option) == "table" then
-        currentOrbs = option
-        orbToggle = true
-        print("🎯 AUTO-ORBS (CUSTOM) ACTIVATED")
-        startFarm()
-    else
-        print("Invalid option! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
-    end
-end
-return function(state)
-    orbToggle = state
-    if state then
-        print("🎯 AUTO-ORBS ACTIVATED (Optimized)")
-        startFarm()
-    else
-        print("🛑 AUTO-ORBS STOPPED")
-        stopFarm()
-    end
-end        connection:Disconnect()
-        connection = nil
-    end
-end
-
-return function(state)
-    orbToggle = state
-    if state then
-        print("🎯 AUTO-ORBS ACTIVATED (Optimized)")
-        startFarm()
-    else
-        print("🛑 AUTO-ORBS STOPPED")
-        stopFarm()
+        warn("Invalid option for auto-orbs.lua! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
     end
 end
