@@ -1,15 +1,18 @@
--- WORKING AUTO-ORBS
+-- IMPROVED AUTO-ORBS
 local orbToggle = false
+local orbs = {"Yellow Orb", "Red Orb"}
+local location = "City"
 
 local function OrbLoop()
     while true do
         if orbToggle then
             pcall(function()
-                game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Yellow Orb", "City")
-                game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", "Red Orb", "City")
+                for _, orb in ipairs(orbs) do
+                    game:GetService("ReplicatedStorage").rEvents.orbEvent:FireServer("collectOrb", orb, location)
+                end
             end)
         end
-        wait(0.5)
+        task.wait(0.5) -- more accurate than wait()
     end
 end
 
