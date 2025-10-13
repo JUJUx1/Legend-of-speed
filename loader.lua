@@ -3,6 +3,7 @@ local modules = {
     {"Auto-Rebirth", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-rebirth.lua"},
     {"Auto-Orbs", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-orbs.lua"}, 
     {"Auto-Crystals", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-crystals.lua"},
+    {"Auto-Hoop", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-hoop.lua"}, -- ADD THIS LINE
     {"Anti-AFK", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/anti-afk.lua"},
     {"FPS-Booster", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/fps-booster.lua"},
     {"Server-Hopper", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/server-hopper.lua"}
@@ -149,14 +150,15 @@ function CreateZetaUI()
     end)
 
     -- CREATE CONTROL BUTTONS
-    local buttonTemplates = {
-        {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "toggle"},
-        {"AUTO-ORBS: OFF", "Auto-Orbs", "toggle"},
-        {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "toggle"},
-        {"ACTIVATE ANTI-AFK", "Anti-AFK", "activate"},
-        {"BOOST FPS", "FPS-Booster", "boost"},
-        {"SERVER HOP", "Server-Hopper", "hop"}
-    }
+   local buttonTemplates = {
+    {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "toggle"},
+    {"AUTO-ORBS: OFF", "Auto-Orbs", "toggle"},
+    {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "toggle"},
+    {"AUTO-HOOP: OFF", "Auto-Hoop", "toggle"}, -- ADD THIS LINE
+    {"ACTIVATE ANTI-AFK", "Anti-AFK", "activate"},
+    {"BOOST FPS", "FPS-Booster", "boost"},
+    {"SERVER HOP", "Server-Hopper", "hop"}
+}
 
     for i, template in ipairs(buttonTemplates) do
         local button = Instance.new("TextButton")
