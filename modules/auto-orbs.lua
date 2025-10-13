@@ -11,46 +11,74 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local connection
 
-local function findOrbEvent()
-    -- Try different possible remote event paths
+-- FUNCTION TO FIND THE CORRECT REMOTE
+local function findOrbRemote()
+    print("🔍 Searching for orb remote...")
+    
+    -- Common remote paths in Legend of Speed
     local possiblePaths = {
         "rEvents.orbEvent",
-        "RemoteEvents.OrbEvent", 
         "Remotes.OrbEvent",
+        "RemoteEvents.OrbEvent", 
         "OrbEvent",
         "orbEvent",
-        "Events.OrbEvent"
+        "Events.OrbEvent",
+        "rEvents.OrbRemote",
+        "Remotes.OrbRemote",
+        "GameEvents.OrbEvent",
+        "Network.OrbEvent"
     }
     
     for _, path in ipairs(possiblePaths) do
         local remote = ReplicatedStorage
+        local found = true
+        
         for part in path:gmatch("[^.]+") do
-            remote = remote:FindFirstChild(part)
-            if not remote then break end
+            if remote:FindFirstChild(part) then
+                remote = remote:FindFirstChild(part)
+            else
+                found = false
+                break
+            end
         end
-        if remote and remote:IsA("RemoteEvent") then
-            print("✅ Found orb event at: " .. path)
+        
+        if found and remote:IsA("RemoteEvent") then
+            print("✅ FOUND ORB REMOTE: " .. path)
             return remote
         end
     end
     
-    warn("❌ Could not find orb event remote")
+    -- If no remote found, try to find any RemoteEvent that might be for orbs
+    print("⚠️  Searching for any RemoteEvent...")
+    for _, child in pairs(ReplicatedStorage:GetDescendants()) do
+        if child:IsA("RemoteEvent") then
+            print("🔍 Found RemoteEvent: " .. child:GetFullName())
+            -- Try calling it to see if it works
+            pcall(function()
+                child:FireServer("test")
+                print("✅ Potential orb remote: " .. child:GetFullName())
+                return child
+            end)
+        end
+    end
+    
+    warn("❌ COULD NOT FIND ORB REMOTE EVENT")
     return nil
 end
 
-local orbEvent = findOrbEvent()
+local orbRemote = findOrbRemote()
 
 local function collectOrbs()
-    if not orbEvent then
-        warn("❌ Orb event not found - cannot collect orbs")
+    if not orbRemote then
+        print("❌ No orb remote found - please check the remote path")
         return
     end
     
     pcall(function()
         for _, location in ipairs(locations) do
             for _, orb in ipairs(currentOrbs) do
-                orbEvent:FireServer("collectOrb", orb, location)
-                task.wait(0.05) -- Small delay to prevent flooding
+                orbRemote:FireServer("collectOrb", orb, location)
+                task.wait(0.01) -- Small delay to prevent crashing
             end
         end
     end)
