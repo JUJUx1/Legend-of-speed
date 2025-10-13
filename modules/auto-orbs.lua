@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH BURST MODE
+-- ADVANCED AUTO-ORBS WITH BURST MODE (FIXED STOP)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -10,6 +10,7 @@ local currentOrbs = allOrbs
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local connection
+local stopBurst = false  -- ADDED: Control variable for stopping bursts
 
 -- FUNCTION TO FIND THE CORRECT REMOTE
 local function findOrbRemote()
@@ -49,13 +50,20 @@ end
 
 local orbRemote = findOrbRemote()
 
--- BURST COLLECTION FUNCTION (Runs 20 times)
+-- BURST COLLECTION FUNCTION (Runs 20 times but can be stopped)
 local function burstCollect()
     if not orbRemote then return end
     
     local burstCount = 20  -- Run 20 times
+    stopBurst = false      -- Reset stop flag
     
     for burst = 1, burstCount do
+        -- CHECK IF WE SHOULD STOP BEFORE EACH BURST
+        if stopBurst or not orbToggle then
+            print("🛑 BURST STOPPED EARLY")
+            break
+        end
+        
         pcall(function()
             for _, location in ipairs(locations) do
                 for _, orb in ipairs(currentOrbs) do
@@ -67,29 +75,17 @@ local function burstCollect()
     end
 end
 
--- SINGLE RUN COLLECTION (Original function)
-local function collectOrbs()
-    if not orbRemote then return end
-    
-    pcall(function()
-        for _, location in ipairs(locations) do
-            for _, orb in ipairs(currentOrbs) do
-                orbRemote:FireServer("collectOrb", orb, location)
-            end
-        end
-    end)
-end
-
 local function startFarm()
     if connection then return end
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
-            burstCollect()  -- Use burst mode instead of single collection
+            burstCollect()  -- Use burst mode
         end
     end)
 end
 
 local function stopFarm()
+    stopBurst = true  -- SET STOP FLAG
     if connection then
         connection:Disconnect()
         connection = nil
@@ -100,20 +96,24 @@ return function(option)
     if option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
+        stopBurst = false
         print("🎯 AUTO-ORBS BURST MODE ACTIVATED (20x)")
         startFarm()
     elseif option == "off" then
         orbToggle = false
+        stopBurst = true
         print("🛑 AUTO-ORBS STOPPED")
         stopFarm()
     elseif option == "yellow" then
         currentOrbs = {"Yellow Orb"}
         orbToggle = true
+        stopBurst = false
         print("💛 YELLOW ORB BURST MODE ACTIVATED (20x)")
         startFarm()
     elseif type(option) == "table" then
         currentOrbs = option
         orbToggle = true
+        stopBurst = false
         print("🎯 AUTO-ORBS CUSTOM BURST MODE ACTIVATED (20x)")
         startFarm()
     else
