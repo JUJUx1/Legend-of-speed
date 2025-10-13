@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER + RUNSERVICE SAFETY)
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER + INITIALIZATION SAFETY)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -26,6 +26,9 @@ end
 local function startFarm()
     stopFarm()
     orbToggle = true
+
+    -- ⏳ Wait one frame to ensure game is ready
+    task.wait(0)
 
     if not RunService or not RunService.Heartbeat then
         warn("[Auto-Orbs] RunService or Heartbeat not available! Stopping.")
