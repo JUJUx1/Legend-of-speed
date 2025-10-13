@@ -1,11 +1,10 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
     "Eternal Orb", "Green Orb", "Gem Orb", "Diamond Orb"
 }
 local locations = { "City", "Desert", "Space", "Magma", "Legends Highway", "Snow", "Dark Matter" }
-local currentOrbs = allOrbs -- Default to all orbs
+local currentOrbs = allOrbs
 
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -35,6 +34,32 @@ local function stopFarm()
         connection:Disconnect()
         connection = nil
     end
+end
+
+return function(option)
+    if option == "on" then
+        currentOrbs = allOrbs
+        orbToggle = true
+        print("🎯 AUTO-ORBS (ALL) ACTIVATED")
+        startFarm()
+    elseif option == "off" then
+        orbToggle = false
+        print("🛑 AUTO-ORBS STOPPED")
+        stopFarm()
+    elseif option == "yellow" then
+        currentOrbs = {"Yellow Orb"}
+        orbToggle = true
+        print("🎯 AUTO-ORBS (YELLOW) ACTIVATED")
+        startFarm()
+    elseif type(option) == "table" then
+        currentOrbs = option
+        orbToggle = true
+        print("🎯 AUTO-ORBS (CUSTOM) ACTIVATED")
+        startFarm()
+    else
+        print("Invalid option! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
+    end
+end    end
 end
 
 -- The returned function can be called as:
