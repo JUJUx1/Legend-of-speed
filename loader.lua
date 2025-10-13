@@ -1,30 +1,79 @@
--- ZETA REALM COMPLETE LOADER (with Yellow Only Option + Auto-Hoop)
+-- ZETA REALM COMPLETE LOADER (WITH AUTO-ORBS FIX)
 local modules = {
     {"Auto-Rebirth", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-rebirth.lua"},
     {"Auto-Orbs", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-orbs.lua"}, 
     {"Auto-Crystals", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-crystals.lua"},
-    {"Auto-Hoop", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-hoop.lua"}, -- NEW MODULE
+    {"Auto-Hoop", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-hoop.lua"},
     {"Anti-AFK", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/anti-afk.lua"},
     {"FPS-Booster", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/fps-booster.lua"},
     {"Server-Hopper", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/server-hopper.lua"}
 }
 
 local ZetaModules = {}
-local toggleStates = {} -- Track toggle states
+local toggleStates = {}
 
--- LOAD ALL MODULES
+-- LOAD ALL MODULES WITH AUTO-ORBS FALLBACK
 print("🚀 LOADING ZETA REALM MODULES...")
 for _, module in pairs(modules) do
     local success, loadedModule = pcall(function()
         return loadstring(game:HttpGet(module[2]))()
     end)
+    
     if success then
         ZetaModules[module[1]] = loadedModule
-        toggleStates[module[1]] = false -- Initialize toggle state
+        toggleStates[module[1]] = false
         print("✅ " .. module[1])
     else
         warn("❌ FAILED: " .. module[1])
-        ZetaModules[module[1]] = nil
+        
+        -- AUTO-ORBS FALLBACK
+        if module[1] == "Auto-Orbs" then
+            print("🔄 LOADING AUTO-ORBS FALLBACK...")
+            ZetaModules["Auto-Orbs"] = loadstring([[
+                local enabled = false
+                local conn = nil
+                local orbRemote = game:GetService("ReplicatedStorage").rEvents.orbEvent
+                local places = {"City", "Desert", "Space", "Magma", "Legends Highway", "Snow", "Dark Matter"}
+                local allOrbs = {"Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb", "Eternal Orb", "Green Orb", "Gem Orb", "Diamond Orb"}
+                
+                return function(cmd)
+                    if cmd == "on" then
+                        enabled = true
+                        print("🎯 AUTO-ORBS ACTIVATED (FALLBACK)")
+                        if conn then conn:Disconnect() end
+                        conn = game:GetService("RunService").Heartbeat:Connect(function()
+                            if not enabled then return end
+                            for _, place in ipairs(places) do
+                                for _, orb in ipairs(allOrbs) do
+                                    orbRemote:FireServer("collectOrb", orb, place)
+                                end
+                            end
+                        end)
+                    elseif cmd == "yellow" then
+                        enabled = true
+                        print("💛 YELLOW ORBS ACTIVATED (FALLBACK)")
+                        if conn then conn:Disconnect() end
+                        conn = game:GetService("RunService").Heartbeat:Connect(function()
+                            if not enabled then return end
+                            for _, place in ipairs(places) do
+                                orbRemote:FireServer("collectOrb", "Yellow Orb", place)
+                            end
+                        end)
+                    elseif cmd == "off" then
+                        enabled = false
+                        if conn then
+                            conn:Disconnect()
+                            conn = nil
+                        end
+                        print("🛑 AUTO-ORBS STOPPED")
+                    end
+                end
+            ]])()
+            toggleStates["Auto-Orbs"] = false
+            print("✅ Auto-Orbs (FALLBACK LOADED)")
+        else
+            ZetaModules[module[1]] = nil
+        end
     end
 end
 
@@ -55,7 +104,7 @@ function CreateZetaUI()
     MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
     MainFrame.BorderSizePixel = 0
     MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
-    MainFrame.Size = UDim2.new(0, 300, 0, 410) -- Increased height for new button
+    MainFrame.Size = UDim2.new(0, 300, 0, 410)
     MainFrame.Active = true
     MainFrame.Draggable = true
 
@@ -139,7 +188,7 @@ function CreateZetaUI()
             ToggleButton.Text = "SHOW"
         else
             Content.Visible = true
-            MainFrame.Size = UDim2.new(0, 300, 0, 410) -- Updated height
+            MainFrame.Size = UDim2.new(0, 300, 0, 410)
             ToggleButton.Text = "HIDE"
         end
     end)
@@ -154,7 +203,7 @@ function CreateZetaUI()
         {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "toggle"},
         {"AUTO-ORBS: OFF", "Auto-Orbs", "toggle"},
         {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "toggle"},
-        {"AUTO-HOOP: OFF", "Auto-Hoop", "toggle"}, -- NEW BUTTON
+        {"AUTO-HOOP: OFF", "Auto-Hoop", "toggle"},
         {"ACTIVATE ANTI-AFK", "Anti-AFK", "activate"},
         {"BOOST FPS", "FPS-Booster", "boost"},
         {"SERVER HOP", "Server-Hopper", "hop"}
