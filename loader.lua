@@ -1,11 +1,11 @@
 -- ZETA REALM COMPLETE LOADER
 local modules = {
-    {"Auto-Rebirth", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-rebirth.lua"},
-    {"Auto-Orbs", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-orbs.lua"}, 
-    {"Auto-Crystals", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/auto-crystals.lua"},
-    {"Anti-AFK", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/anti-afk.lua"},
-    {"FPS-Booster", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/fps-booster.lua"},
-    {"Server-Hopper", "https://github.com/JUJUx1/Legend-of-speed/blob/main/modules/server-hopper.lua"}
+    {"Auto-Rebirth", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-rebirth.lua"},
+    {"Auto-Orbs", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-orbs.lua"}, 
+    {"Auto-Crystals", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/auto-crystals.lua"},
+    {"Anti-AFK", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/anti-afk.lua"},
+    {"FPS-Booster", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/fps-booster.lua"},
+    {"Server-Hopper", "https://raw.githubusercontent.com/JUJUx1/Legend-of-speed/refs/heads/main/modules/server-hopper.lua"}
 }
 
 local ZetaModules = {}
@@ -35,6 +35,176 @@ function CreateZetaUI()
     local ToggleButton = Instance.new("TextButton")
     local CloseButton = Instance.new("TextButton")
     local Content = Instance.new("Frame")
+    local UIListLayout = Instance.new("UIListLayout")
+
+    -- Parent everything
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    MainFrame.Parent = ScreenGui
+    TopBar.Parent = MainFrame
+    Title.Parent = TopBar
+    ToggleButton.Parent = TopBar
+    CloseButton.Parent = TopBar
+    Content.Parent = MainFrame
+    UIListLayout.Parent = Content
+
+    -- UI Styling
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
+    MainFrame.Size = UDim2.new(0, 300, 0, 350)
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+
+    TopBar.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    TopBar.BorderSizePixel = 0
+    TopBar.Size = UDim2.new(1, 0, 0, 30)
+
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    Title.Size = UDim2.new(0, 200, 1, 0)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = "ZETA REALM CONTROL"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 14
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+    ToggleButton.BorderSizePixel = 0
+    ToggleButton.Position = UDim2.new(1, -60, 0, 5)
+    ToggleButton.Size = UDim2.new(0, 50, 0, 20)
+    ToggleButton.Font = Enum.Font.Gotham
+    ToggleButton.Text = "HIDE"
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.TextSize = 12
+
+    CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+    CloseButton.BorderSizePixel = 0
+    CloseButton.Position = UDim2.new(1, -30, 0, 5)
+    CloseButton.Size = UDim2.new(0, 20, 0, 20)
+    CloseButton.Font = Enum.Font.GothamBold
+    CloseButton.Text = "X"
+    CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CloseButton.TextSize = 12
+
+    Content.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    Content.BorderSizePixel = 0
+    Content.Position = UDim2.new(0, 0, 0, 30)
+    Content.Size = UDim2.new(1, 0, 1, -30)
+
+    UIListLayout.Padding = UDim.new(0, 5)
+    UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+    -- DRAGGABLE FUNCTIONALITY
+    local dragging, dragInput, dragStart, startPos
+
+    local function update(input)
+        local delta = input.Position - dragStart
+        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+
+    MainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    MainFrame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
+        end
+    end)
+
+    -- TOGGLE FUNCTIONALITY
+    ToggleButton.MouseButton1Click:Connect(function()
+        if Content.Visible then
+            Content.Visible = false
+            MainFrame.Size = UDim2.new(0, 300, 0, 30)
+            ToggleButton.Text = "SHOW"
+        else
+            Content.Visible = true
+            MainFrame.Size = UDim2.new(0, 300, 0, 350)
+            ToggleButton.Text = "HIDE"
+        end
+    end)
+
+    -- CLOSE FUNCTIONALITY
+    CloseButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    -- CREATE CONTROL BUTTONS
+    local buttonTemplates = {
+        {"AUTO-REBIRTH: OFF", "Auto-Rebirth", "Toggle"},
+        {"AUTO-ORBS: OFF", "Auto-Orbs", "Toggle"}, 
+        {"AUTO-CRYSTALS: OFF", "Auto-Crystals", "Toggle"},
+        {"ACTIVATE ANTI-AFK", "Anti-AFK", "Activate"},
+        {"BOOST FPS", "FPS-Booster", "Boost"},
+        {"SERVER HOP", "Server-Hopper", "Hop"}
+    }
+
+    for i, template in ipairs(buttonTemplates) do
+        local button = Instance.new("TextButton")
+        button.Parent = Content
+        button.Size = UDim2.new(0.9, 0, 0, 35)
+        button.Text = template[1]
+        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Font = Enum.Font.Gotham
+        button.TextSize = 12
+        
+        button.MouseButton1Click:Connect(function()
+            if ZetaModules[template[2]] then
+                if template[3] == "Toggle" then
+                    -- Toggle buttons
+                    if button.Text:find("OFF") then
+                        ZetaModules[template[2]].Toggle(true)
+                        button.Text = button.Text:gsub("OFF", "ON")
+                        button.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+                    else
+                        ZetaModules[template[2]].Toggle(false)
+                        button.Text = button.Text:gsub("ON", "OFF")
+                        button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+                    end
+                else
+                    -- One-click buttons
+                    ZetaModules[template[2]][template[3]]()
+                    button.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
+                    wait(0.5)
+                    button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+                end
+            else
+                warn("Module not loaded: " .. template[2])
+            end
+        end)
+    end
+
+    print("🔥 ZETA REALM UI CREATED")
+    print("👑 ALPHA CONTROL READY")
+    
+    return ScreenGui
+end
+
+-- AUTO-CREATE THE UI
+CreateZetaUI()
+
+print("🎯 ZETA REALM FULLY OPERATIONAL")
+print("💀 ALL SYSTEMS RESPONSIVE")    local Content = Instance.new("Frame")
     local UIListLayout = Instance.new("UIListLayout")
 
     -- Parent everything
