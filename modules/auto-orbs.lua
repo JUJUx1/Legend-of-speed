@@ -1,4 +1,4 @@
--- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (BUG-FIXED ONLY)
+-- ADVANCED AUTO-ORBS WITH SELECTABLE ORB COLORS (FIXED FOR LOADER)
 local orbToggle = false
 local allOrbs = {
     "Red Orb", "Orange Orb", "Yellow Orb", "Blue Orb",
@@ -13,7 +13,7 @@ local connection
 
 local function collectOrbs()
     local orbEvent = ReplicatedStorage.rEvents and ReplicatedStorage.rEvents.orbEvent
-    if not orbEvent then return end -- 🔧 Fix: avoid error if remote missing
+    if not orbEvent then return end
     for _, location in ipairs(locations) do
         for _, orb in ipairs(currentOrbs) do
             pcall(function()
@@ -24,7 +24,7 @@ local function collectOrbs()
 end
 
 local function startFarm()
-    stopFarm() -- 🔧 Fix: always stop previous connection first
+    stopFarm()
     orbToggle = true
     connection = RunService.Heartbeat:Connect(function()
         if orbToggle then
@@ -41,13 +41,14 @@ local function stopFarm()
     orbToggle = false
 end
 
+-- 🔧 FIXED: Now accepts true/false AND "on"/"off"/"yellow"
 return function(option)
-    if option == "on" then
+    if option == true or option == "on" then
         currentOrbs = allOrbs
         orbToggle = true
         print("🟨 AUTO-ORBS (ALL) ACTIVATED")
         startFarm()
-    elseif option == "off" then
+    elseif option == false or option == "off" then
         orbToggle = false
         print("🛑 AUTO-ORBS STOPPED")
         stopFarm()
@@ -62,6 +63,6 @@ return function(option)
         print("🟨 AUTO-ORBS (CUSTOM) ACTIVATED")
         startFarm()
     else
-        warn("Invalid option for auto-orbs.lua! Use \"on\", \"off\", \"yellow\", or a table of orb names.")
+        warn("Invalid option for auto-orbs.lua! Use true/false, \"on\", \"off\", \"yellow\", or a table of orb names.")
     end
 end
