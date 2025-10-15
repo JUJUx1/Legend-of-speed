@@ -1,11 +1,12 @@
+-- Auto-Orbs Module for Legend of Speed
 local enabled = false
 local conn = nil
 local orbRemote = game:GetService("ReplicatedStorage").rEvents.orbEvent
 local RunService = game:GetService("RunService")
 
 -- Configuration
-local ORB_NAME = "Yellow Orb" -- Change to the desired orb name
-local LOCATION = "City" -- Change to the desired location
+local ORB_NAME = "Yellow Orb" -- Default orb name (change based on game)
+local LOCATION = "City" -- Default location (change based on game)
 local DELAY = 0.5 -- Delay between calls (in seconds) to avoid rate limits
 
 -- Hook the remote to log arguments
@@ -23,7 +24,7 @@ return function(cmd, orbName, location)
 
     if cmd == "farm" then
         if enabled then
-            print("⚠️ FARMING ALREADY ACTIVE")
+            print("⚠️ ORB FARMING ALREADY ACTIVE")
             return
         end
         enabled = true
@@ -95,7 +96,7 @@ return function(cmd, orbName, location)
             conn:Disconnect()
             conn = nil
         end
-        print("🛑 FARMING STOPPED")
+        print("🛑 ORB FARMING STOPPED")
 
     else
         print("❓ UNKNOWN COMMAND: " .. tostring(cmd))
